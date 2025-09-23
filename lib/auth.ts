@@ -9,6 +9,7 @@ import { sendMail } from "./mail/mail";
 import { verifyEmailHtml } from "@/components/emails/verify-email";
 import { resetPasswordHtml } from "@/components/emails/reset-password-email";
 import { lastLoginMethod } from "better-auth/plugins";
+import { ac, owner, admin, member } from "@/lib/permission";
 
 export const auth = betterAuth({
   emailVerification: {
@@ -65,5 +66,16 @@ export const auth = betterAuth({
     schema,
   }),
 
-  plugins: [organization(), lastLoginMethod(), nextCookies()], // make sure this is the last plugin in the array
+  plugins: [
+    organization({
+      ac,
+      roles: {
+        owner,
+        admin,
+        member,
+      },
+    }),
+    lastLoginMethod(),
+    nextCookies(),
+  ], // make sure this is the last plugin in the array
 });
