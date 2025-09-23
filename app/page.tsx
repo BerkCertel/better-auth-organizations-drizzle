@@ -6,9 +6,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <>
-      {/* <header className="absolute top-0 right-0 flex justify-end items-center p-4">
-        <ModeSwitcher />
-      </header> */}
       <div className="flex flex-col gap-5 items-center justify-center h-screen px-5 text-center">
         <Image
           src="/better-auth-starter.png"

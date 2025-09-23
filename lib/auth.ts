@@ -1,18 +1,17 @@
 import { db } from "@/db/drizzle";
+import { organization } from "better-auth/plugins";
 import { schema } from "@/db/schema";
-
+import { getActiveOrganization } from "@/server/organizations";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { sendMail } from "./mail/mail";
 import { verifyEmailHtml } from "@/components/emails/verify-email";
 import { resetPasswordHtml } from "@/components/emails/reset-password-email";
-// import { renderEmailToHtml } from "./mail/render-email";
-// import ForgotPasswordEmail from "@/components/emails/reset-password"; // DOĞRU
 
 export const auth = betterAuth({
   emailVerification: {
-    sendVerificationEmail: async ({ user, url }, request) => {
+    sendVerificationEmail: async ({ user, url }) => {
       const html = verifyEmailHtml({ user, url });
       await sendMail({
         to: user.email,
@@ -45,10 +44,25 @@ export const auth = betterAuth({
     },
     requireEmailVerification: true,
   },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const organization = await getActiveOrganization(session.userId);
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: organization?.id,
+            },
+          };
+        },
+      },
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
     schema,
   }),
 
-  plugins: [nextCookies()], // make sure this is the last plugin in the array
+  plugins: [organization(), nextCookies()], // make sure this is the last plugin in the array
 });

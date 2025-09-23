@@ -1,1 +1,2 @@
 https://orm.drizzle.team/docs/tutorials/drizzle-nextjs-neon
+$ npx @better-auth/cli generate
