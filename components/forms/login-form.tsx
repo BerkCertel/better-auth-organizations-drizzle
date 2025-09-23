@@ -31,6 +31,7 @@ import { Loader2 } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 const formSchema = z.object({
   email: z.email(),
@@ -41,6 +42,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const lastMethod = authClient.getLastUsedLoginMethod();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -88,10 +90,15 @@ export function LoginForm({
                     onClick={signInWithGoogle}
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full relative"
                   >
                     <FaGoogle />
                     Login with Google
+                    {lastMethod === "google" && (
+                      <Badge className="absolute right-2 text-[10px]">
+                        Last Used
+                      </Badge>
+                    )}
                   </Button>
                 </div>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
@@ -106,7 +113,12 @@ export function LoginForm({
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <div className="flex gap-2 items-center justify-between">
+                            <FormLabel>Email</FormLabel>
+                            {lastMethod === "email" && (
+                              <Badge className=" text-[10px]">Last Used</Badge>
+                            )}
+                          </div>
                           <FormControl>
                             <Input placeholder="m@example.com" {...field} />
                           </FormControl>

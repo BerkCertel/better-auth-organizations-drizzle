@@ -8,6 +8,7 @@ import { nextCookies } from "better-auth/next-js";
 import { sendMail } from "./mail/mail";
 import { verifyEmailHtml } from "@/components/emails/verify-email";
 import { resetPasswordHtml } from "@/components/emails/reset-password-email";
+import { lastLoginMethod } from "better-auth/plugins";
 
 export const auth = betterAuth({
   emailVerification: {
@@ -64,5 +65,5 @@ export const auth = betterAuth({
     schema,
   }),
 
-  plugins: [organization(), nextCookies()], // make sure this is the last plugin in the array
+  plugins: [organization(), lastLoginMethod(), nextCookies()], // make sure this is the last plugin in the array
 });
